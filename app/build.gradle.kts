@@ -1,10 +1,9 @@
-import com.android.build.api.variant.BuildConfigField
-
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -63,6 +62,7 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.navigation:navigation-fragment-ktx:2.6.0")
     implementation("androidx.navigation:navigation-ui-ktx:2.6.0")
+    implementation("androidx.navigation:navigation-dynamic-features-fragment:2.6.0")
     implementation("androidx.recyclerview:recyclerview:1.3.1")
 
 
@@ -74,6 +74,7 @@ dependencies {
     implementation("io.coil-kt:coil:2.4.0")
     implementation("com.mikepenz:fastadapter:5.7.0")
     implementation("com.mikepenz:fastadapter-extensions-binding:5.7.0")
+    implementation("com.google.android.gms:play-services-maps:18.1.0")
 
     kapt("com.google.dagger:hilt-compiler:2.47")
 
