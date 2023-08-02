@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.taitsmith.weatherman.api.ApiRepository
+import com.taitsmith.weatherman.data.GeoResponseData
 import com.taitsmith.weatherman.data.WeatherResponseData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -19,6 +20,9 @@ class MainViewModel @Inject constructor(
     private val _weatherResponse = MutableLiveData<WeatherResponseData>()
     val weatherResponse: LiveData<WeatherResponseData> = _weatherResponse
 
+    private val _geoResponse = MutableLiveData<List<GeoResponseData>>()
+    val geoResponse: LiveData<List<GeoResponseData>> = _geoResponse
+
     fun getWeather(lat: Double, lon: Double) {
         viewModelScope.launch(Dispatchers.IO) {
             _weatherResponse.postValue(apiRepository.getWeatherForLocation(lat, lon))
@@ -27,7 +31,7 @@ class MainViewModel @Inject constructor(
 
     fun getGeoData(city: String, state: String?) {
         viewModelScope.launch {
-            apiRepository.getGeoDataFromCity(city, state)
+            _geoResponse.postValue(apiRepository.getGeoDataFromCity(city, state))
         }
     }
 }
