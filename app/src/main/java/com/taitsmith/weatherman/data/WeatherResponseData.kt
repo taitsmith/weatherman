@@ -1,6 +1,7 @@
 package com.taitsmith.weatherman.data
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 /**
  * holds our response object that comes back from the openweathermap api
@@ -44,7 +45,8 @@ data class WeatherResponseData (
 
     @SerializedName("cod")
     var cod: Int?= null
-)
+) : Serializable
+
 data class Coord (
     @SerializedName("lon")
     var lon: Double? = null,
