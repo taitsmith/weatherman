@@ -1,12 +1,12 @@
 package com.taitsmith.weatherman.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.FastAdapter
@@ -64,9 +64,9 @@ class FirstFragment : Fragment() {
         mainViewModel.weatherResponse.observe(
             viewLifecycleOwner
         ) {
-            Log.d("WEATHER: ", it.weather.toString())
+            val action = FirstFragmentDirections.actionFirstFragmentToSecondFragment(it)
+            findNavController().navigate(action)
         }
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

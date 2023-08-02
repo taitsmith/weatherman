@@ -3,8 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     tools:context=".ui.SecondFragment">
     
     <data>
@@ -29,20 +27,61 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.1"/>
+            app:layout_constraintGuide_percent="0.15" />
         
         <TextView
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_margin="8dp"
             android:id="@+id/weather_data_city_name"
-            android:textSize="24dp"
+            android:textSize="24sp"
             android:text="@{@string/weather_detail_city_name(weather.name)}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/weather_data_horiz_guideline"
             />
+
+        <TextView
+            android:id="@+id/weather_data_summary"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_margin="8dp"
+            android:text="@{@string/weather_detail_summary(weather.main.temp, weather.weather[0].description)}"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toTopOf="@+id/weather_data_horiz_guideline"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:id="@+id/weather_detail_imageview"
+            android:contentDescription="@string/weather_detail_image_description"
+            app:layout_constraintTop_toBottomOf="@id/weather_data_horiz_guideline"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:id="@+id/weather_data_high"
+            android:text="@{@string/weather_detail_high(weather.main.tempMax)}"
+            app:layout_constraintTop_toBottomOf="@id/weather_detail_imageview"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/weather_data_vert_guideline"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:id="@+id/weather_data_low"
+            android:text="@{@string/weather_detail_low(weather.main.tempMin)}"
+            app:layout_constraintStart_toEndOf="@id/weather_data_vert_guideline"
+            app:layout_constraintTop_toBottomOf="@id/weather_detail_imageview"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
