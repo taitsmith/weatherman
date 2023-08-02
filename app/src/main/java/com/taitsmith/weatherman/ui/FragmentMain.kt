@@ -12,18 +12,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.adapters.ItemAdapter
 import com.taitsmith.weatherman.data.GeoResponseData
-import com.taitsmith.weatherman.databinding.FragmentFirstBinding
+import com.taitsmith.weatherman.databinding.FragmentMainBinding
 import com.taitsmith.weatherman.viewmodels.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class FirstFragment : Fragment() {
+class FragmentMain : Fragment() {
 
     private val mainViewModel: MainViewModel by activityViewModels()
     private val geoAdapter = ItemAdapter<GeoResponseData>()
     private val fastAdapter = FastAdapter.with(geoAdapter)
 
-    private var _binding: FragmentFirstBinding? = null
+    private var _binding: FragmentMainBinding? = null
     private var _geoListView: RecyclerView? = null
 
     private val binding get() = _binding!!
@@ -34,7 +34,7 @@ class FirstFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        _binding = FragmentFirstBinding.inflate(inflater, container, false)
+        _binding = FragmentMainBinding.inflate(inflater, container, false)
         _geoListView = binding.geoListRecycler
 
         geoListView.layoutManager =
@@ -45,7 +45,6 @@ class FirstFragment : Fragment() {
         setObservers()
 
         return binding.root
-
     }
 
     private fun setObservers() {
@@ -64,7 +63,7 @@ class FirstFragment : Fragment() {
         mainViewModel.weatherResponse.observe(
             viewLifecycleOwner
         ) {
-            val action = FirstFragmentDirections.actionFirstFragmentToSecondFragment(it)
+            val action = FragmentMainDirections.actionFirstFragmentToSecondFragment(it)
             findNavController().navigate(action)
         }
     }
