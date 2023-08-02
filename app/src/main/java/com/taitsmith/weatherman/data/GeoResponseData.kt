@@ -1,5 +1,6 @@
 package com.taitsmith.weatherman.data
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.google.gson.annotations.SerializedName
@@ -7,6 +8,10 @@ import com.mikepenz.fastadapter.binding.AbstractBindingItem
 import com.taitsmith.weatherman.R
 import com.taitsmith.weatherman.databinding.GeodataListItemBinding
 
+/**
+ * holds response data from calling the openweathermap geocoder api. extends abstractbindingitem
+ * so it can be used with fastadapter for recycler views
+ */
 class GeoResponseData : AbstractBindingItem<GeodataListItemBinding>() {
     @SerializedName("name")
     var name: String? = null
@@ -29,8 +34,9 @@ class GeoResponseData : AbstractBindingItem<GeodataListItemBinding>() {
     override val type: Int
         get() = R.id.geodata_list_item
 
+    @SuppressLint("SetTextI18n")
     override fun bindView(binding: GeodataListItemBinding, payloads: List<Any>) {
-        binding.geoListItemName.text = name ?: "oops"
+        binding.geoListItemName.text = ("$name, $state, $country")
     }
 
     override fun createBinding(

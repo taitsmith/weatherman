@@ -2,18 +2,15 @@ package com.taitsmith.weatherman.ui
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.adapters.ItemAdapter
-import com.taitsmith.weatherman.R
 import com.taitsmith.weatherman.data.GeoResponseData
 import com.taitsmith.weatherman.databinding.FragmentFirstBinding
 import com.taitsmith.weatherman.viewmodels.MainViewModel
@@ -43,6 +40,8 @@ class FirstFragment : Fragment() {
         geoListView.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
 
+        mainViewModel.getGeoData(mainViewModel.getLastSearch())
+
         setObservers()
 
         return binding.root
@@ -50,19 +49,32 @@ class FirstFragment : Fragment() {
     }
 
     private fun setObservers() {
+        fastAdapter.onClickListener = { _, _, item, _ ->
+            mainViewModel.getWeather(item.lat, item.lon)
+            false
+        }
+
         mainViewModel.geoResponse.observe(
-            viewLifecycleOwner
+              viewLifecycleOwner
         ) {
             geoListView.adapter = fastAdapter
             geoAdapter.add(it)
         }
+
+        mainViewModel.weatherResponse.observe(
+            viewLifecycleOwner
+        ) {
+            Log.d("WEATHER: ", it.weather.toString())
+        }
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.buttonFirst.setOnClickListener {
-            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+        binding.buttonSearch.setOnClickListener {
+            geoAdapter.clear()
+            mainViewModel.validateInput(binding.cityInput.text.toString())
         }
     }
 

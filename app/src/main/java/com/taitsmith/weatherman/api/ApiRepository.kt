@@ -27,13 +27,9 @@ class ApiRepository @Inject constructor(
     }
 
     suspend fun getGeoDataFromCity(
-        city: String,
-        state: String?,
+        city: String
     ) : List<GeoResponseData> {
-
-        //obviously comes back as "oakland,,us" if state is left blank, but this functions properly
-        //went sent to the api
-        val formattedCityState = "$city,$state,us"
+        val formattedCityState = "$city,us"
         return geocoderApiInterface.getGeocodedLocation(formattedCityState)
     }
 }
