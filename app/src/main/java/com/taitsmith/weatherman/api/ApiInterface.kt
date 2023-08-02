@@ -3,7 +3,6 @@ package com.taitsmith.weatherman.api
 import com.taitsmith.weatherman.data.GeoResponseData
 import com.taitsmith.weatherman.data.WeatherResponseData
 import retrofit2.http.GET
-import retrofit2.http.Path
 import retrofit2.http.Query
 
 /**
@@ -17,6 +16,7 @@ interface ApiInterface {
     suspend fun getLocalWeather(
         @Query("lat") latitude: Double,
         @Query("lon") longitude: Double,
+        @Query("units") units: String,
         @Query("appid") appid: String = "8f37ce56969484b82dce75161bc99891"
     ) : WeatherResponseData
 

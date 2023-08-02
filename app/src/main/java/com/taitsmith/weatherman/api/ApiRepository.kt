@@ -20,16 +20,20 @@ class ApiRepository @Inject constructor(
 ) {
     suspend fun getWeatherForLocation(
         lat: Double,
-        lon: Double
+        lon: Double,
+        units: String = "imperial"
     ) : WeatherResponseData {
-        return weatherApiInterface.getLocalWeather(lat, lon)
+        return weatherApiInterface.getLocalWeather(lat, lon, units)
     }
 
     suspend fun getGeoDataFromCity(
         city: String,
         state: String?,
     ) : List<GeoResponseData> {
-        val formattedCityState = "$city,$state"
+
+        //obviously comes back as "oakland,,us" if state is left blank, but this functions properly
+        //went sent to the api
+        val formattedCityState = "$city,$state,us"
         return geocoderApiInterface.getGeocodedLocation(formattedCityState)
     }
 }

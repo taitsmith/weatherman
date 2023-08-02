@@ -25,7 +25,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun getGeoData(city: String, state: String) {
+    fun getGeoData(city: String, state: String?) {
         viewModelScope.launch {
             apiRepository.getGeoDataFromCity(city, state)
         }
