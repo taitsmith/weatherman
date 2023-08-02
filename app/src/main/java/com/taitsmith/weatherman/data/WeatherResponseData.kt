@@ -86,8 +86,14 @@ data class Main (
     var pressure: Int? = null,
 
     @SerializedName("humidity")
-    var humidity: Int? = null
-)
+    var humidity: Int? = null,
+) {
+
+    //turn temps to an int because whole numbers look better than saying it's 89.23 degrees
+    fun getTempInt() : Int  { return temp!!.toInt() }
+    fun getMaxInt() : Int  { return tempMax!!.toInt()}
+    fun getMinInt() : Int { return tempMin!!.toInt()}
+}
 
 data class Wind (
     @SerializedName("speed")
@@ -98,7 +104,12 @@ data class Wind (
 
     @SerializedName("gust")
     var gust: Double? = null
-)
+) {
+    fun getWindInt(): Int {
+        return speed!!.toInt()
+    }
+}
+
 
 data class Clouds (
     @SerializedName("all")
