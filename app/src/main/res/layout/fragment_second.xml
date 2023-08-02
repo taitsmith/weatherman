@@ -83,5 +83,25 @@
             app:layout_constraintTop_toBottomOf="@id/weather_detail_imageview"
             app:layout_constraintEnd_toEndOf="parent"/>
 
+        <TextView
+            android:id="@+id/weather_data_humidity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:text="@{@string/weather_detail_humidity(weather.main.humidity)}"
+            app:layout_constraintEnd_toStartOf="@+id/weather_data_vert_guideline"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/weather_data_high"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/weather_data_wind"
+            android:layout_margin="8dp"
+            android:text="@{@string/weather_detail_wind_speed(weather.wind.speed)}"
+            app:layout_constraintTop_toBottomOf="@id/weather_data_low"
+            app:layout_constraintStart_toEndOf="@id/weather_data_vert_guideline"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

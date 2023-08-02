@@ -16,4 +16,6 @@
     <string name="weather_detail_high">Today\'s high: %1$s</string>
     <string name="weather_detail_low">Today\'s low: %1$s</string>
     <string name="weather_detail_image_description">Image view showing an icon of the current weather</string>
+    <string name="weather_detail_humidity">Humidity: %1$s</string>
+    <string name="weather_detail_wind_speed">Wind speed: %1$s</string>
 </resources>
