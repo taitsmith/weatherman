@@ -3,6 +3,8 @@ package com.taitsmith.weatherman.viewmodels
 import android.app.Application
 import android.content.Context
 import android.location.Location
+import android.location.LocationManager
+import androidx.core.location.LocationManagerCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -48,7 +50,13 @@ class MainViewModel @Inject constructor(
 
     private fun getGeoData(city: String) {
         viewModelScope.launch {
-            _geoResponse.postValue(Event(apiRepository.getGeoDataFromCity(city)))
+            val geo = Event(apiRepository.getGeoDataFromCity(city))
+            if (geo.peekContent().isEmpty()) {
+                _errorMessage.postValue("NO_RESULTS")
+                return@launch
+            } else {
+                _geoResponse.postValue(geo)
+            }
         }
     }
 
@@ -89,5 +97,10 @@ class MainViewModel @Inject constructor(
 
     fun stopLocationUpdates() {
         locationRepository.stopLocationUpdates()
+    }
+
+    fun locationEnabled() : Boolean {
+        val lm = application.baseContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return LocationManagerCompat.isLocationEnabled(lm)
     }
 }

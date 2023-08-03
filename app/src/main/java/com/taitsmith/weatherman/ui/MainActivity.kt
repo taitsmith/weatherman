@@ -1,7 +1,9 @@
 package com.taitsmith.weatherman.ui
 
 import android.Manifest
+import android.app.Activity
 import android.os.Bundle
+import android.view.inputmethod.InputMethodManager
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -38,9 +40,10 @@ class MainActivity : AppCompatActivity() {
 
         binding.buttonSearch.setOnClickListener {
             mainViewModel.validateInput(binding.cityInput.text.toString())
+            closeKeyboard()
         }
 
-        getLastOrLocation()
+        getLocation()
         setObserver()
 
         binding.fab.setOnClickListener {
@@ -53,13 +56,18 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun closeKeyboard() {
+        val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(binding.root.windowToken, 0)
+    }
+
     private fun setObserver() {
         mainViewModel.errorMessage.observe(this) {
            val s: String = when(it) {
-               "NETWORK_FAILURE"  -> getString(R.string.error_network)
-               "BAD_INPUT"      -> getString(R.string.error_bad_input)
-               "NO_RESULTS"     -> getString(R.string.error_empty_results)
-               else             -> getString(R.string.error_generic)
+               "NETWORK_FAILURE"    -> getString(R.string.error_network)
+               "BAD_INPUT"          -> getString(R.string.error_bad_input)
+               "NO_RESULTS"         -> getString(R.string.error_empty_results)
+               else                 -> getString(R.string.error_generic)
            }
             Snackbar.make(binding.root, s, Snackbar.LENGTH_LONG).show()
         }
@@ -67,25 +75,27 @@ class MainActivity : AppCompatActivity() {
 
     //ask for permission to access location, if granted start listening for updates and then find
     //weather for that location. otherwise get and display weather for the last selected location
-    private fun getLastOrLocation() {
+    private fun getLocation() {
         val locationPermissionRequest = registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()
         ) { permissions ->
             when {
                 permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
-                   mainViewModel.startLocationUpdates()
+                    if (mainViewModel.locationEnabled()) {
+                        //we only want to bother with this if the location setting is enabled
+                        mainViewModel.startLocationUpdates()
+                    } else getLast()
                 }
-
-                else -> {
-                    mainViewModel.getLastSearch().let {
-                        if (it != null) {
-                            mainViewModel.getWeather(it.latitude, it.longitude)
-                        }
-                    }
-                }
+                else -> getLast()
             }
         }
         locationPermissionRequest.launch(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION))
+    }
+
+    private fun getLast() {
+        if (lastSearch != null) {
+            mainViewModel.getWeather(lastSearch!!.latitude, lastSearch!!.longitude)
+        }
     }
 
     override fun onDestroy() {
