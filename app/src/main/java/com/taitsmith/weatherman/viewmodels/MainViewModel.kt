@@ -6,7 +6,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.maps.model.LatLng
 import com.taitsmith.weatherman.api.ApiRepository
+import com.taitsmith.weatherman.data.Event
 import com.taitsmith.weatherman.data.GeoResponseData
 import com.taitsmith.weatherman.data.WeatherResponseData
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,45 +22,46 @@ class MainViewModel @Inject constructor(
     private val application: Application
 ): AndroidViewModel(application) {
 
-    private val _weatherResponse = MutableLiveData<WeatherResponseData>()
-    val weatherResponse: LiveData<WeatherResponseData> = _weatherResponse
+    private val _weatherResponse = MutableLiveData<Event<WeatherResponseData>>()
+    val weatherResponse: LiveData<Event<WeatherResponseData>> = _weatherResponse
 
-    private val _geoResponse = MutableLiveData<List<GeoResponseData>>()
-    val geoResponse: LiveData<List<GeoResponseData>> = _geoResponse
+    private val _geoResponse = MutableLiveData<Event<List<GeoResponseData>>>()
+    val geoResponse: LiveData<Event<List<GeoResponseData>>> = _geoResponse
 
     private val _errorMessage = MutableLiveData<String>()
     val errorMessage: LiveData<String> = _errorMessage
 
     fun getWeather(lat: Double, lon: Double) {
         viewModelScope.launch(Dispatchers.IO) {
-            _weatherResponse.postValue(apiRepository.getWeatherForLocation(lat, lon))
+            _weatherResponse.postValue(Event(apiRepository.getWeatherForLocation(lat, lon)))
         }
     }
 
     fun getGeoData(city: String) {
         viewModelScope.launch {
-            _geoResponse.postValue(apiRepository.getGeoDataFromCity(city))
+            _geoResponse.postValue(Event(apiRepository.getGeoDataFromCity(city)))
         }
     }
 
-    fun getLastSearch() : String {
+    fun getLastSearch() : LatLng? {
         val sharedPrefs = application.getSharedPreferences("LAST_CITY", Context.MODE_PRIVATE)
-        return sharedPrefs.getString("LAST_CITY", "oakland").toString()
+        val lat = sharedPrefs.getString("LAT", "0.0")?.toDouble()
+        val lon = sharedPrefs.getString("LON", "0.0")?.toDouble()
+        return if (lat == 0.0 || lon == 0.0) null
+        else LatLng(lat!!, lon!!)
     }
 
-    private fun saveLastSearch(last: String) {
+    fun saveLastSearch(last: LatLng) {
         val sharedPrefs = application.getSharedPreferences("LAST_CITY", Context.MODE_PRIVATE)
         with (sharedPrefs.edit()) {
-            putString("LAST_CITY", last)
+            putString("LAT", last.latitude.toString())
+            putString("LON", last.longitude.toString())
             apply()
         }
     }
 
     fun validateInput(cityInput: String) {
         if (cityInput.isEmpty()) _errorMessage.value = "BAD_INPUT"
-        else {
-            getGeoData(cityInput)
-            saveLastSearch(cityInput)
-        }
+        else getGeoData(cityInput)
     }
 }

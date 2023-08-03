@@ -7,8 +7,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.maps.model.LatLng
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.adapters.ItemAdapter
 import com.taitsmith.weatherman.data.GeoResponseData
@@ -20,6 +22,12 @@ import dagger.hilt.android.AndroidEntryPoint
 class FragmentMain : Fragment() {
 
     private val mainViewModel: MainViewModel by activityViewModels()
+    private val args: FragmentMainArgs by navArgs()
+
+    private val geo by lazy {
+        args.geoResponse
+    }
+
     private val geoAdapter = ItemAdapter<GeoResponseData>()
     private val fastAdapter = FastAdapter.with(geoAdapter)
 
@@ -37,10 +45,14 @@ class FragmentMain : Fragment() {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
         _geoListView = binding.geoListRecycler
 
+        if (geo != null) {
+            geoAdapter.clear()
+            geoListView.adapter = fastAdapter
+            geoAdapter.add(geo!!)
+        }
+
         geoListView.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-
-        mainViewModel.getGeoData(mainViewModel.getLastSearch())
 
         setObservers()
 
@@ -54,26 +66,23 @@ class FragmentMain : Fragment() {
         }
 
         mainViewModel.geoResponse.observe(
-              viewLifecycleOwner
+            viewLifecycleOwner
         ) {
-            geoListView.adapter = fastAdapter
-            geoAdapter.add(it)
+            it.getContentIfNotHandled()?.let { geoData ->
+                geoAdapter.clear()
+                geoListView.adapter = fastAdapter
+                geoAdapter.add(geoData)
+            }
         }
 
         mainViewModel.weatherResponse.observe(
             viewLifecycleOwner
         ) {
-            val action = FragmentMainDirections.actionFirstFragmentToSecondFragment(it)
-            findNavController().navigate(action)
-        }
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        binding.buttonSearch.setOnClickListener {
-            geoAdapter.clear()
-            mainViewModel.validateInput(binding.cityInput.text.toString())
+            it.getContentIfNotHandled()?.let { wr ->
+                mainViewModel.saveLastSearch(LatLng(wr.coord?.lat!!, wr.coord?.lon!!))
+                val action = FragmentMainDirections.actionFirstFragmentToSecondFragment(wr)
+                findNavController().navigate(action)
+            }
         }
     }
 
