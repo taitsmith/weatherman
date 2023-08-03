@@ -13,6 +13,11 @@
         <action
             android:id="@+id/action_FirstFragment_to_SecondFragment"
             app:destination="@id/SecondFragment" />
+        <argument
+            android:name="geoResponse"
+            app:argType="com.taitsmith.weatherman.data.GeoResponseData"
+            app:nullable="true"
+            android:defaultValue="@null"/>
     </fragment>
     <fragment
         android:id="@+id/SecondFragment"
@@ -21,7 +26,9 @@
         tools:layout="@layout/fragment_weather_detail">
         <argument
             android:name="weather"
-            app:argType="com.taitsmith.weatherman.data.WeatherResponseData" />
+            app:argType="com.taitsmith.weatherman.data.WeatherResponseData"
+            app:nullable="true"
+            android:defaultValue="@null"/>
         <action
             android:id="@+id/action_SecondFragment_to_FirstFragment"
             app:destination="@id/FirstFragment" />

@@ -8,32 +8,7 @@
     android:padding="16dp"
     tools:context=".ui.FragmentMain">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/vert_guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.7" />
 
-    <EditText
-        android:id="@+id/city_input"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="@string/search_button_hint"
-        app:layout_constraintBottom_toTopOf="@id/geo_list_recycler"
-        app:layout_constraintEnd_toStartOf="@id/vert_guideline"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/button_search"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/search_button"
-        app:layout_constraintBottom_toTopOf="@id/geo_list_recycler"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/vert_guideline"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/geo_list_recycler"
@@ -42,7 +17,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/button_search" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 

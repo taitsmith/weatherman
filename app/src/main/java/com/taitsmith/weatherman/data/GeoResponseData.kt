@@ -7,12 +7,13 @@ import com.google.gson.annotations.SerializedName
 import com.mikepenz.fastadapter.binding.AbstractBindingItem
 import com.taitsmith.weatherman.R
 import com.taitsmith.weatherman.databinding.GeodataListItemBinding
+import java.io.Serializable
 
 /**
  * holds response data from calling the openweathermap geocoder api. extends abstractbindingitem
  * so it can be used with fastadapter for recycler views
  */
-class GeoResponseData : AbstractBindingItem<GeodataListItemBinding>() {
+class GeoResponseData : AbstractBindingItem<GeodataListItemBinding>(), Serializable{
     @SerializedName("name")
     var name: String? = null
 
