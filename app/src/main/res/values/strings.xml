@@ -18,4 +18,10 @@
     <string name="weather_detail_image_description">Image view showing an icon of the current weather</string>
     <string name="weather_detail_humidity">Humidity: %1$s</string>
     <string name="weather_detail_wind_speed">Wind speed: %1$s</string>
+
+    <!-- error message strings -->
+    <string name="error_network">Looks like a network error, try again shortly</string>
+    <string name="error_bad_input">Please try again with a valid input</string>
+    <string name="error_empty_results">Looks like there\'s no results for this</string>
+    <string name="error_generic">Looks like something went wrong</string>
 </resources>

@@ -2,6 +2,7 @@ package com.taitsmith.weatherman.viewmodels
 
 import android.app.Application
 import android.content.Context
+import android.location.Location
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -11,6 +12,7 @@ import com.taitsmith.weatherman.api.ApiRepository
 import com.taitsmith.weatherman.data.Event
 import com.taitsmith.weatherman.data.GeoResponseData
 import com.taitsmith.weatherman.data.WeatherResponseData
+import com.taitsmith.weatherman.di.LocationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -19,6 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val apiRepository: ApiRepository,
+    private val locationRepository: LocationRepository,
     private val application: Application
 ): AndroidViewModel(application) {
 
@@ -31,13 +34,19 @@ class MainViewModel @Inject constructor(
     private val _errorMessage = MutableLiveData<String>()
     val errorMessage: LiveData<String> = _errorMessage
 
+    var lastLocation: Location? = null
+
     fun getWeather(lat: Double, lon: Double) {
         viewModelScope.launch(Dispatchers.IO) {
-            _weatherResponse.postValue(Event(apiRepository.getWeatherForLocation(lat, lon)))
+            kotlin.runCatching {
+                _weatherResponse.postValue(Event(apiRepository.getWeatherForLocation(lat, lon)))
+            }.onFailure {
+                _errorMessage.postValue("NETWORK_FAILURE")
+            }
         }
     }
 
-    fun getGeoData(city: String) {
+    private fun getGeoData(city: String) {
         viewModelScope.launch {
             _geoResponse.postValue(Event(apiRepository.getGeoDataFromCity(city)))
         }
@@ -63,5 +72,22 @@ class MainViewModel @Inject constructor(
     fun validateInput(cityInput: String) {
         if (cityInput.isEmpty()) _errorMessage.value = "BAD_INPUT"
         else getGeoData(cityInput)
+    }
+
+    fun startLocationUpdates() {
+        locationRepository.startLocationUpdates()
+        viewModelScope.launch {
+            locationRepository.lastLocation.collect {
+                if (it == null) return@collect
+                if (it.longitude != 0.0) { //wait until we have an actual location
+                    getWeather(it.latitude, it.longitude)
+                    lastLocation = it
+                }
+            }
+        }
+    }
+
+    fun stopLocationUpdates() {
+        locationRepository.stopLocationUpdates()
     }
 }
