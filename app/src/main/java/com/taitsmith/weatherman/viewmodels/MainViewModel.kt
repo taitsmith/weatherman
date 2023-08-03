@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.location.Location
 import android.location.LocationManager
+import androidx.annotation.VisibleForTesting
 import androidx.core.location.LocationManagerCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -48,7 +49,8 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun getGeoData(city: String) {
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    fun getGeoData(city: String) {
         viewModelScope.launch {
             val geo = Event(apiRepository.getGeoDataFromCity(city))
             if (geo.peekContent().isEmpty()) {
@@ -102,5 +104,9 @@ class MainViewModel @Inject constructor(
     fun locationEnabled() : Boolean {
         val lm = application.baseContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         return LocationManagerCompat.isLocationEnabled(lm)
+    }
+
+    fun setErrorMessage(error: String) {
+        _errorMessage.value = error
     }
 }
