@@ -34,8 +34,8 @@ class MainViewModel @Inject constructor(
     private val _geoResponse = MutableLiveData<Event<List<GeoResponseData>>>()
     val geoResponse: LiveData<Event<List<GeoResponseData>>> = _geoResponse
 
-    private val _errorMessage = MutableLiveData<String>()
-    val errorMessage: LiveData<String> = _errorMessage
+    private val _statusMessage = MutableLiveData<String>()
+    val statusMessage: LiveData<String> = _statusMessage
 
     var lastLocation: Location? = null
 
@@ -44,7 +44,7 @@ class MainViewModel @Inject constructor(
             kotlin.runCatching {
                 _weatherResponse.postValue(Event(apiRepository.getWeatherForLocation(lat, lon)))
             }.onFailure {
-                _errorMessage.postValue("NETWORK_FAILURE")
+                _statusMessage.postValue("NETWORK_FAILURE")
             }
         }
     }
@@ -54,7 +54,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             val geo = Event(apiRepository.getGeoDataFromCity(city))
             if (geo.peekContent().isEmpty()) {
-                _errorMessage.postValue("NO_RESULTS")
+                _statusMessage.postValue("NO_RESULTS")
                 return@launch
             } else {
                 _geoResponse.postValue(geo)
@@ -80,7 +80,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun validateInput(cityInput: String) {
-        if (cityInput.isEmpty()) _errorMessage.value = "BAD_INPUT"
+        if (cityInput.isEmpty()) _statusMessage.value = "BAD_INPUT"
         else getGeoData(cityInput)
     }
 
@@ -106,7 +106,7 @@ class MainViewModel @Inject constructor(
         return LocationManagerCompat.isLocationEnabled(lm)
     }
 
-    fun setErrorMessage(error: String) {
-        _errorMessage.value = error
+    fun setStatusMessage(status: String) {
+        _statusMessage.value = status
     }
 }

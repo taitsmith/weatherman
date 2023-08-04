@@ -62,14 +62,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setObserver() {
-        mainViewModel.errorMessage.observe(this) {
-           val s: String = when(it) {
-               "NETWORK_FAILURE"    -> getString(R.string.error_network)
-               "BAD_INPUT"          -> getString(R.string.error_bad_input)
-               "NO_RESULTS"         -> getString(R.string.error_empty_results)
-               else                 -> getString(R.string.error_generic)
+        mainViewModel.statusMessage.observe(this) {
+           val s = when(it) {
+               "NETWORK_FAILURE"    -> getString(R.string.status_network_error)
+               "BAD_INPUT"          -> getString(R.string.status_input_error)
+               "NO_RESULTS"         -> getString(R.string.status_empty_result_error)
+               "FETCHING_LAST"      -> getString(R.string.status_fetching_last)
+               "FETCHING_CURRENT"   -> getString(R.string.status_fetching_current)
+               else                 -> getString(R.string.status_generic_error)
            }
-            Snackbar.make(binding.root, s, Snackbar.LENGTH_LONG).show()
+            showSnackbar(s)
         }
     }
 
@@ -83,6 +85,7 @@ class MainActivity : AppCompatActivity() {
                 permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
                     if (mainViewModel.locationEnabled()) {
                         //we only want to bother with this if the location setting is enabled
+                        mainViewModel.setStatusMessage("FETCHING_CURRENT")
                         mainViewModel.startLocationUpdates()
                     } else getLast()
                 }
@@ -94,8 +97,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun getLast() {
         if (lastSearch != null) {
+            mainViewModel.setStatusMessage("FETCHING_LAST")
             mainViewModel.getWeather(lastSearch!!.latitude, lastSearch!!.longitude)
         }
+    }
+
+    private fun showSnackbar(message: String) {
+       Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).show()
     }
 
     override fun onDestroy() {

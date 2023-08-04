@@ -20,8 +20,10 @@
     <string name="weather_detail_wind_speed">Wind speed: %1$s</string>
 
     <!-- error message strings -->
-    <string name="error_network">Looks like a network error, try again shortly</string>
-    <string name="error_bad_input">Please try again with a valid input</string>
-    <string name="error_empty_results">Looks like there\'s no results for that search</string>
-    <string name="error_generic">Looks like something went wrong</string>
+    <string name="status_network_error">Looks like a network error, try again shortly</string>
+    <string name="status_input_error">Please try again with a valid input</string>
+    <string name="status_empty_result_error">Looks like there\'s no results for that search</string>
+    <string name="status_generic_error">Looks like something went wrong</string>
+    <string name="status_fetching_current">Getting weather for your current location</string>
+    <string name="status_fetching_last">Getting weather for your last searched location</string>
 </resources>
