@@ -37,28 +37,36 @@ class MainViewModel @Inject constructor(
     private val _statusMessage = MutableLiveData<String>()
     val statusMessage: LiveData<String> = _statusMessage
 
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> = _isLoading
+
     var lastLocation: Location? = null
 
     fun getWeather(lat: Double, lon: Double) {
+        _isLoading.value = true
         viewModelScope.launch(Dispatchers.IO) {
             kotlin.runCatching {
                 _weatherResponse.postValue(Event(apiRepository.getWeatherForLocation(lat, lon)))
             }.onFailure {
                 _statusMessage.postValue("NETWORK_FAILURE")
             }
+            _isLoading.postValue(false)
         }
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     fun getGeoData(city: String) {
+        _isLoading.value = true
         viewModelScope.launch {
             val geo = Event(apiRepository.getGeoDataFromCity(city))
             if (geo.peekContent().isEmpty()) {
                 _statusMessage.postValue("NO_RESULTS")
+                _geoResponse.postValue(geo)
                 return@launch
             } else {
                 _geoResponse.postValue(geo)
             }
+            _isLoading.postValue(false)
         }
     }
 

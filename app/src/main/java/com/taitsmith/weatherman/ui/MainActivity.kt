@@ -3,6 +3,7 @@ package com.taitsmith.weatherman.ui
 import android.Manifest
 import android.app.Activity
 import android.os.Bundle
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -44,7 +45,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         getLocation()
-        setObserver()
+        setObservers()
 
         binding.fab.setOnClickListener {
             if (mainViewModel.lastLocation != null) {
@@ -61,7 +62,7 @@ class MainActivity : AppCompatActivity() {
         inputMethodManager.hideSoftInputFromWindow(binding.root.windowToken, 0)
     }
 
-    private fun setObserver() {
+    private fun setObservers() {
         mainViewModel.statusMessage.observe(this) {
            val s = when(it) {
                "NETWORK_FAILURE"    -> getString(R.string.status_network_error)
@@ -72,6 +73,13 @@ class MainActivity : AppCompatActivity() {
                else                 -> getString(R.string.status_generic_error)
            }
             showSnackbar(s)
+        }
+
+        mainViewModel.isLoading.observe(this) {
+            when (it) {
+                true    -> binding.mainLoadingIcon.visibility = View.VISIBLE
+                false   -> binding.mainLoadingIcon.visibility = View.INVISIBLE
+            }
         }
     }
 

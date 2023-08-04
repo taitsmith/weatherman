@@ -35,6 +35,17 @@
         app:layout_constraintStart_toEndOf="@id/vert_guideline"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:id="@+id/main_loading_icon"
+        android:visibility="invisible"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
     <include
         layout="@layout/content_main"
         android:layout_height="0dp"
