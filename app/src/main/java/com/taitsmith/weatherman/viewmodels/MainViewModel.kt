@@ -42,6 +42,9 @@ class MainViewModel @Inject constructor(
 
     var lastLocation: Location? = null
 
+    //get weather in background for given lat/lon. can be called by selecting a location from
+    //search results list or by using the device's physical location. the api occasionally times out
+    //so we use runcatching to handle that (or we could just increase the timeout on the call(
     fun getWeather(lat: Double, lon: Double) {
         _isLoading.value = true
         viewModelScope.launch(Dispatchers.IO) {
@@ -54,6 +57,10 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    //assuming the user has entered a non-empty search, we have to get the lat/lon coords to be
+    //able to find the weather. some searches return multiple results so we'll display those and
+    //allow users to pick which one they want. in the case of empty results (for a nonsense search
+    //like 'alsdkfha' we'll display an error message
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     fun getGeoData(city: String) {
         _isLoading.value = true
@@ -70,6 +77,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    //reads lat and lon strings from shared prefs, checks they're valid and returns a latlng if true
     fun getLastSearch() : LatLng? {
         val sharedPrefs = application.getSharedPreferences("LAST_CITY", Context.MODE_PRIVATE)
         val lat = sharedPrefs.getString("LAT", "0.0")?.toDouble()
@@ -78,6 +86,8 @@ class MainViewModel @Inject constructor(
         else LatLng(lat!!, lon!!)
     }
 
+    //when the user picks a location from the list of results, store the latlng data to be read later
+    //could also convert the latlng to a string, store that and then separate it out with .split()
     fun saveLastSearch(last: LatLng) {
         val sharedPrefs = application.getSharedPreferences("LAST_CITY", Context.MODE_PRIVATE)
         with (sharedPrefs.edit()) {
@@ -87,6 +97,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    //don't allow empty searches
     fun validateInput(cityInput: String) {
         if (cityInput.isEmpty()) _statusMessage.value = "BAD_INPUT"
         else getGeoData(cityInput)

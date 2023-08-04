@@ -62,6 +62,7 @@ class MainActivity : AppCompatActivity() {
         inputMethodManager.hideSoftInputFromWindow(binding.root.windowToken, 0)
     }
 
+    //observe some live data to update users on status, errors etc
     private fun setObservers() {
         mainViewModel.statusMessage.observe(this) {
            val s = when(it) {

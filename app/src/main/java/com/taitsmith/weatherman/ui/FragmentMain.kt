@@ -79,6 +79,8 @@ class FragmentMain : Fragment() {
         mainViewModel.weatherResponse.observe(
             viewLifecycleOwner
         ) {
+            //check if this livedata update has been handled, ignore if it has. otherwise
+            //navigate to weather detail page with the weather results to be displayed
             it.getContentIfNotHandled()?.let { wr ->
                 val action = FragmentMainDirections.actionFirstFragmentToSecondFragment(wr)
                 findNavController().navigate(action)
@@ -89,5 +91,7 @@ class FragmentMain : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        geoAdapter.clear()
+        geoListView.adapter = null
     }
 }
