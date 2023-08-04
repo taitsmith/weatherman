@@ -62,6 +62,7 @@ class FragmentMain : Fragment() {
     private fun setObservers() {
         fastAdapter.onClickListener = { _, _, item, _ ->
             mainViewModel.getWeather(item.lat, item.lon)
+            mainViewModel.saveLastSearch(LatLng(item.lat, item.lon))
             false
         }
 
@@ -79,7 +80,6 @@ class FragmentMain : Fragment() {
             viewLifecycleOwner
         ) {
             it.getContentIfNotHandled()?.let { wr ->
-                mainViewModel.saveLastSearch(LatLng(wr.coord?.lat!!, wr.coord?.lon!!))
                 val action = FragmentMainDirections.actionFirstFragmentToSecondFragment(wr)
                 findNavController().navigate(action)
             }
