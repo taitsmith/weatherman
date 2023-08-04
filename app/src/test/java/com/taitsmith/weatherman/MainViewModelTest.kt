@@ -23,6 +23,8 @@ import org.junit.runners.JUnit4
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.doThrow
+import retrofit2.HttpException
 
 @RunWith(JUnit4::class)
 class MainViewModelTest {
@@ -111,8 +113,8 @@ class MainViewModelTest {
 
     @Test
     fun `test error message updates live data`() = runTest {
-        mainViewModel.setErrorMessage("GENERIC_ERROR")
-        assertEquals("GENERIC_ERROR", mainViewModel.errorMessage.getOrAwaitValue())
+        mainViewModel.setStatusMessage("GENERIC_ERROR")
+        assertEquals("GENERIC_ERROR", mainViewModel.statusMessage.getOrAwaitValue())
     }
 
     @Test
@@ -120,6 +122,25 @@ class MainViewModelTest {
         `when`(apiRepository.getGeoDataFromCity("empty")).thenReturn(listOf())
         mainViewModel.getGeoData("empty")
 
-        assertEquals("NO_RESULTS", mainViewModel.errorMessage.getOrAwaitValue())
+        assertEquals("NO_RESULTS", mainViewModel.statusMessage.getOrAwaitValue())
     }
+
+    @Test
+    fun `test network failure sets error message`() = runTest {
+        doThrow(HttpException::class).`when`(apiRepository).getWeatherForLocation(0.0, 0.0)
+        mainViewModel.getWeather(0.0, 0.0)
+        assertEquals("NETWORK_FAILURE", mainViewModel.statusMessage.getOrAwaitValue())
+    }
+
+    @Test
+    fun `test validate input validates input`() = runTest {
+        `when`(apiRepository.getGeoDataFromCity("Cool Town")).thenReturn(listOf(mockedGeoResponse))
+        mainViewModel.validateInput("")
+        assertEquals("BAD_INPUT", mainViewModel.statusMessage.getOrAwaitValue())
+
+        mainViewModel.validateInput("Cool Town")
+        val vmData = mainViewModel.geoResponse.getOrAwaitValue().peekContent()
+        assertEquals(mockedGeoResponse, vmData[0])
+    }
+
 }
